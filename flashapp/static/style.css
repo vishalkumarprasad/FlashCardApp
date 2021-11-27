@@ -1,0 +1,14 @@
+.vertical-center {
+  min-height: 80%;
+  min-height: 80vh;
+  align-items: center;
+}
+
+.float-right {
+  max-width: 50%;
+  height: auto;
+}
+
+.size {
+  font-size: 1.5rem;
+}
