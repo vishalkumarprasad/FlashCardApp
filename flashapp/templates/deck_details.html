@@ -62,17 +62,33 @@
 </div>
 
 
-<br />
+<br/>
 
 {% if deck_details[1]|length>0 %}
 
-    <div class="list-group">
-        {% for card in deck_details[1] %}
-          <a href="/decks/{{ deck_details[0].deck_id }}/cards/{{ card.card_id }}" class="list-group-item list-group-item-action">
-            Card {{ card.card_id }} - {{ card.card_ques }} | {{ card.diff_level }}
-          </a>
-        {% endfor %}
-    </div>
+    <table class="table table-striped table-hover table-bordered justify-content-center">
+  <thead>
+    <tr>
+      <th scope="col">S.No</th>
+      <th scope="col">Card</th>
+      <th scope="col">Difficulty Level</th>
+      <th scope="col">Score</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+
+  {% for i in range(deck_details[1]|length) %}
+    <tr>
+      <th scope="row">{{ (i+1) }}</th>
+      <td>{{ deck_details[1][i].card_ques }}</td>
+      <td>{{ deck_details[1][i].diff_level }}</td>
+      <td>{{ deck_details[1][i].score }}</td>
+        <td><button type="button" class="btn btn-outline-primary" onclick="location.href='/decks/{{ deck_details[0].deck_id }}/cards/{{ deck_details[1][i].card_id }}'">Edit</button></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
 
 {% else %}
 <p class="font-weight-bold font-italic text-center size">There are no cards available for this deck.</p>

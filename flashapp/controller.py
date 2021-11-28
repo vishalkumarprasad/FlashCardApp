@@ -1,9 +1,13 @@
 from flask import Blueprint, render_template, flash, request, jsonify
 from flask_login import login_required, current_user
 from flashapp.database import db, User, Card, Deck
+from datetime import datetime
 import json
+from random import choice
 
 views = Blueprint('views', __name__)
+
+score_dict = {'Easy': 1, 'Medium': 2, 'Difficult': 3}
 
 
 @views.route('/')
@@ -16,16 +20,20 @@ def home():
 @login_required
 def dashboard():
     dict_final_score = {}
+    dict_random_card = {}
     for deck in current_user.decks:
         tot_score = full_tot_score = 0
         for card in deck.cards:
-            ind_score = score_calc(card.score, card.diff_level)
+            ind_score = card.score
             tot_score += ind_score
             full_ind_score = score_calc(1, card.diff_level)
             full_tot_score += full_ind_score
         final_score = str(tot_score)+'/'+str(full_tot_score)
+        random_card = choice(deck.cards) if len(deck.cards) > 0 else None
         dict_final_score[deck] = final_score
-    return render_template('dashboard.html', user=current_user, score=dict_final_score)
+        dict_random_card[deck] = random_card
+
+    return render_template('dashboard.html', user=current_user, score=dict_final_score, random_card=dict_random_card)
 
 
 @views.route('/decks', methods=['GET', 'POST'])
@@ -143,6 +151,64 @@ def delete_card():
 
 
 def score_calc(score, diff_level):
-    score_dict = {'Easy': 1, 'Medium': 2, 'Difficult': 3}
     cum_score = score_dict.get(diff_level)*score
     return cum_score
+
+
+@views.route('/decks/<deck_id>/review/<card_id>', methods=['GET', 'POST'])
+@login_required
+def deck_review(deck_id, card_id):
+    deck = Deck.query.filter_by(deck_id=deck_id).first()
+    card = Card.query.filter_by(card_id=card_id).first()
+
+    if request.method == 'POST':
+        user_answer = request.form.get('answer')
+        if user_answer is None or len(user_answer) == 0:
+            flash("Answer cannot be empty", category='error')
+        elif user_answer.strip() == card.card_ans.strip():
+            card.score = score_dict.get(card.diff_level)
+            deck.review_dt = datetime.now()
+            db.session.commit()
+            flash(f'Correct Answer. You scored {card.score} points!', category='success')
+        else:
+            flash(f'Wrong Answer. Please review!', category='error')
+
+    next_card = choose_next_card(deck, card)
+
+    return render_template("review.html", user=current_user, deck=deck, card=card, next_card=next_card)
+
+
+@views.route('/reset-cardscore', methods=['POST'])
+def reset_cardscore():
+    card = json.loads(request.data)
+    card_id = card['card_id']
+    card_obj = Card.query.get(card_id)
+    if card_obj:
+        card_obj.score = 0
+        db.session.commit()
+        flash('Card Score reset.', category='success')
+    return jsonify({})
+
+
+def choose_next_card(deck, card):
+    easy_cards = []
+    med_cards = []
+    diff_cards = []
+    chosen_card = None
+    for ind_card in deck.cards:
+        if ind_card != card:
+            if ind_card.diff_level == 'Easy':
+                easy_cards.append(ind_card)
+            elif ind_card.diff_level == 'Medium':
+                med_cards.append(ind_card)
+            else:
+                diff_cards.append(ind_card)
+    if len(easy_cards) > 0 or len(med_cards) > 0 or len(diff_cards) > 0:
+        if card.score == 0:
+            chosen_card = choice(next(cards for cards in [easy_cards, med_cards, diff_cards] if len(cards) > 0))
+        elif card.score == 1:
+            chosen_card = choice(next(cards for cards in [med_cards, diff_cards, easy_cards] if len(cards) > 0))
+        else:
+            chosen_card = choice(next(cards for cards in [diff_cards, easy_cards, med_cards] if len(cards) > 0))
+    return chosen_card
+

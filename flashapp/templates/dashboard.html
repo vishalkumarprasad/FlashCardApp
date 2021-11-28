@@ -19,9 +19,17 @@
     <tr>
       <th scope="row">{{ (i+1) }}</th>
       <td>{{ user.decks[i].deck_name }}</td>
-      <td>{{ user.decks[i].review_dt or "Never" }}</td>
+        {% if user.decks[i].review_dt %}
+      <td>{{ user.decks[i].review_dt.strftime('%d, %b %Y %H:%M:%S')}}</td>
+        {% else %}
+      <td>{{ "Never" }}</td>
+        {% endif %}
       <td>{{ score[user.decks[i]] }}</td>
-      <td><button type="button" class="btn btn-outline-success" onclick="location.href='/decks/{{user.decks[i].deck_id}}/review'">Review</button>
+        {% if user.decks[i].cards|length>0 %}
+      <td><button type="button" class="btn btn-outline-success" onclick="location.href='/decks/{{user.decks[i].deck_id}}/review/{{random_card[user.decks[i]].card_id}}'">Review</button>
+          {% else %}
+        <td><button type="button" class="btn btn-outline-success" disabled>Review</button>
+          {% endif %}
       </td></td>
     </tr>
   {% endfor %}

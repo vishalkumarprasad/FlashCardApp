@@ -1,0 +1,68 @@
+
+{% extends "base.html" %} {% block title %}Card-Review{% endblock %} {% block content
+%}<h1 align="center">Card-Review</h1>
+    <div class="center">
+    <br/><br/>
+   <div class="card mb-3 text-center border-dark mx-auto" style="max-width: 25rem;">
+  <div class="card-header bg-transparent">
+      Max Score: {{ card.score }}
+      <br/>Your Score: {{ card.score }}
+      <br/>Difficulty Level: {{ card.diff_level }}
+
+      </div>
+  <div class="card-body text-dark">
+    <h5 class="card-title">{{ card.card_ques }}</h5>
+      <br/>
+      <div id="ans" class="hidden">
+      <h6 class="card-title">Answer: </h6>
+      <h5 class="card-title">{{ card.card_ans }}</h5>
+          </div>
+    <br/>
+      <div class="text-center"><button type="button" class="btn btn-primary" onclick="myFunction()">Review</button></div>
+  </div>
+  <div class="card-footer bg-transparent">
+<form method="POST">
+
+  <div class="form-group">
+    <input
+      type="text"
+      class="form-control"
+      id="answer"
+      name="answer"
+      placeholder="Write Answer"
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+  </div>
+</div>
+    <br/>
+    {% if next_card!=NONE %}
+    <a class="btn btn-primary float-right" href="/decks/{{ deck.deck_id }}/review/{{ next_card.card_id }}" role="button">Next Card</a>
+        {% else %}
+        <button type="button" class="btn btn-primary float-right" disabled>Next Card</button>
+    {% endif %}
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter2">
+  Reset Score
+</button>
+<div class="modal fade" id="exampleModalCenter2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Reset Card Score</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        This will reset the score for this card. Are you sure?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" onClick="resetCardScore({{ card.card_id }}, {{ deck.deck_id }})">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+{% endblock %}
