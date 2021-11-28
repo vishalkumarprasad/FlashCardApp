@@ -1,25 +1,28 @@
 {% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block content
 %}
 <h1 align="center">Dashboard</h1>
-<div class="d-inline-block w-100 h-25"></div>
-{% if deck>0 %}
-<table class="table table-striped table-dark">
+<br/>
+{% if user.decks|length>0 %}
+<table class="table table-striped table-hover table-bordered justify-content-center">
   <thead>
     <tr>
       <th scope="col">S.No</th>
       <th scope="col">Deck</th>
-      <th scope="col">Last Reviewed On</th>
+      <th scope="col">Last Reviewed</th>
       <th scope="col">Score</th>
+      <th scope="col">Action</th>
     </tr>
   </thead>
   <tbody>
 
-  {% for i in range(deck) %}
+  {% for i in range(user.decks|length) %}
     <tr>
-      <th scope="row">{{ i+1 }}</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
+      <th scope="row">{{ (i+1) }}</th>
+      <td>{{ user.decks[i].deck_name }}</td>
+      <td>{{ user.decks[i].review_dt or "Never" }}</td>
+      <td>{{ score[user.decks[i]] }}</td>
+      <td><button type="button" class="btn btn-outline-success" onclick="location.href='/decks/{{user.decks[i].deck_id}}/review'">Review</button>
+      </td></td>
     </tr>
   {% endfor %}
   </tbody>

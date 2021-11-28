@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, flash, request, jsonify
 from flask_login import login_required, current_user
 from flashapp.database import db, User, Card, Deck
-from sqlalchemy import and_
 import json
 
 views = Blueprint('views', __name__)
@@ -16,8 +15,17 @@ def home():
 @views.route('/dashboard')
 @login_required
 def dashboard():
-    deck=0
-    return render_template('dashboard.html', user=current_user, deck=deck)
+    dict_final_score = {}
+    for deck in current_user.decks:
+        tot_score = full_tot_score = 0
+        for card in deck.cards:
+            ind_score = score_calc(card.score, card.diff_level)
+            tot_score += ind_score
+            full_ind_score = score_calc(1, card.diff_level)
+            full_tot_score += full_ind_score
+        final_score = str(tot_score)+'/'+str(full_tot_score)
+        dict_final_score[deck] = final_score
+    return render_template('dashboard.html', user=current_user, score=dict_final_score)
 
 
 @views.route('/decks', methods=['GET', 'POST'])
@@ -99,7 +107,7 @@ def card_creation(deck_id):
 @views.route('/decks/<deck_id>/cards/<card_id>', methods=['GET', 'POST'])
 @login_required
 def card_details(deck_id, card_id):
-    card = Card.query.filter_by(card_id=card_id).all()
+    card = Card.query.filter_by(card_id=card_id).first()
 
     if request.method == 'POST':
         new_card_ques = request.form.get('card-ques')
@@ -132,3 +140,9 @@ def delete_card():
         db.session.commit()
         flash('Card deleted.', category='success')
     return jsonify({})
+
+
+def score_calc(score, diff_level):
+    score_dict = {'Easy': 1, 'Medium': 2, 'Difficult': 3}
+    cum_score = score_dict.get(diff_level)*score
+    return cum_score

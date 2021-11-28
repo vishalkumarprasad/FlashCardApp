@@ -6,9 +6,11 @@
 
   <div class="row">
     <div class="col">
+        <label for="exampleFormControlSelect1">Card Question</label>
       <input type="text" style="height:20rem" class="form-control text-center" placeholder="Card Question" id="card-ques" name="card-ques">
     </div>
     <div class="col">
+        <label for="exampleFormControlSelect1">Card Review</label>
       <input type="text" style="height:20rem" class="form-control text-center" placeholder="Card Review Answer" id="card-ans" name="card-ans">
     </div>
   </div>
@@ -23,10 +25,10 @@
     </select>
   </div>
   <br />
-
-</form>
-    <div class="text-center">
+<div class="text-center">
      <button type="submit" class="btn btn-primary">Create Card</button>
     <a class="btn btn-primary" href="/decks/{{ deck_id }}" role="button">Back to Decks</a>
     </div>
+</form>
+
 {% endblock %}
