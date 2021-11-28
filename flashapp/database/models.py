@@ -1,5 +1,8 @@
+"""Module for defining database tables"""
+
 from flask_login import UserMixin
 from sqlalchemy.sql import func
+
 from flashapp.database.database import db
 
 

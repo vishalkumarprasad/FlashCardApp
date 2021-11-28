@@ -1,11 +1,16 @@
-from flask_sqlalchemy import SQLAlchemy
+"""Module for database connectivity"""
+
 from os import path
 
+from flask_sqlalchemy import SQLAlchemy
+
+from flashapp.config import Config
+
 db = SQLAlchemy()
-DB_NAME = "database.db"
 
 
 def create_database(app):
-    if not path.exists('flashapp/' + DB_NAME):
+    """Creates DB file if it doesn't exists"""
+    if not path.exists('flashapp/' + Config.DB_NAME):
         db.create_all(app=app)
         print('Created Database!')

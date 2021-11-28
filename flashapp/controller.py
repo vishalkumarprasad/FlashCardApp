@@ -1,9 +1,13 @@
+"""Module to control all routes"""
+
+import json
+from datetime import datetime
+from random import choice
+
 from flask import Blueprint, render_template, flash, request, jsonify
 from flask_login import login_required, current_user
-from flashapp.database import db, User, Card, Deck
-from datetime import datetime
-import json
-from random import choice
+
+from flashapp.database import db, Card, Deck
 
 views = Blueprint('views', __name__)
 
@@ -44,7 +48,7 @@ def deck_creation():
 
         deck = Deck.query.filter_by(deck_name=deck_name).first()
 
-        if deck:
+        if deck and current_user.id == deck.user_id:
             flash('Deck already exists.', category='error')
         else:
             new_deck = Deck(deck_name=deck_name, user_id=current_user.id)
@@ -165,7 +169,7 @@ def deck_review(deck_id, card_id):
         user_answer = request.form.get('answer')
         if user_answer is None or len(user_answer) == 0:
             flash("Answer cannot be empty", category='error')
-        elif user_answer.strip() == card.card_ans.strip():
+        elif (user_answer.strip()).lower() == (card.card_ans.strip()).lower():
             card.score = score_dict.get(card.diff_level)
             deck.review_dt = datetime.now()
             db.session.commit()

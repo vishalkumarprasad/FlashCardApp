@@ -1,14 +1,17 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flashapp.database import User, db
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, login_required, logout_user, current_user
+"""Module for user authentication"""
 
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask_login import login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from flashapp.database import User, db
 
 auth = Blueprint('auth', __name__)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    """login route"""
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -30,12 +33,14 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
+    """logout route"""
     logout_user()
     return redirect(url_for('views.home'))
 
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def signup():
+    """sign-up route"""
     if request.method == 'POST':
         email = request.form.get('email')
         first_name = request.form.get('firstName')

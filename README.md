@@ -47,11 +47,14 @@ Make sure you have the latest version of Python installed.
 pip install -r requirements.txt
 ```
 
-Setup the below environment-variables.
+Setup the below environment-variable.
 
-- FLASK_APP = main.py
-- FLASK_ENV = development
-- FLASK_DEBUG = 1
+- FLASK_APP
+
+```bash
+export FLASK_APP=main.py
+export FLASK_ENV=development
+```
 
 ### Running The App
 
@@ -61,4 +64,8 @@ python -m flask run
 
 ### Viewing The App
 
-Go to `http://127.0.0.1:5000`
+- Go to `http://127.0.0.1:5000`
+- Login using the below
+    - Username: test@test.com
+    - password: test123
+- Now you can check the already created flash cards

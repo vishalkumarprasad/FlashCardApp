@@ -1,16 +1,19 @@
+"""App Module to create the web-app"""
+
 from flask import Flask
 from flask_login import LoginManager
-from flashapp.controller import views
+
 from flashapp.auth import auth
-from flashapp.database import db, DB_NAME, create_database, User
+from flashapp.config import Config
+from flashapp.controller import views
+from flashapp.database import db, create_database, User
 
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = 'klfaslkdfj'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    app.config.from_object(Config)
     db.init_app(app)
+    app.app_context().push()
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')

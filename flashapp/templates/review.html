@@ -37,7 +37,7 @@
   </div>
 </div>
     <br/>
-    {% if next_card!=NONE %}
+    {% if next_card!=None %}
     <a class="btn btn-primary float-right" href="/decks/{{ deck.deck_id }}/review/{{ next_card.card_id }}" role="button">Next Card</a>
         {% else %}
         <button type="button" class="btn btn-primary float-right" disabled>Next Card</button>
