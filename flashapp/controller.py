@@ -164,13 +164,13 @@ def score_calc(score, diff_level):
 def deck_review(deck_id, card_id):
     deck = Deck.query.filter_by(deck_id=deck_id).first()
     card = Card.query.filter_by(card_id=card_id).first()
-
+    max_score = score_dict.get(card.diff_level)
     if request.method == 'POST':
         user_answer = request.form.get('answer')
         if user_answer is None or len(user_answer) == 0:
             flash("Answer cannot be empty", category='error')
         elif (user_answer.strip()).lower() == (card.card_ans.strip()).lower():
-            card.score = score_dict.get(card.diff_level)
+            card.score = max_score
             deck.review_dt = datetime.now()
             db.session.commit()
             flash(f'Correct Answer. You scored {card.score} points!', category='success')
@@ -179,7 +179,7 @@ def deck_review(deck_id, card_id):
 
     next_card = choose_next_card(deck, card)
 
-    return render_template("review.html", user=current_user, deck=deck, card=card, next_card=next_card)
+    return render_template("review.html", user=current_user, deck=deck, card=card, max_score=max_score, next_card=next_card)
 
 
 @views.route('/reset-cardscore', methods=['POST'])
