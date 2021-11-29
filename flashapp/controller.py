@@ -70,7 +70,7 @@ def deck_details(deck_id):
 
         new_deck = Deck.query.filter_by(deck_name=deck_new_name).first()
 
-        if new_deck:
+        if new_deck and current_user.id == new_deck.user_id:
             flash('This Deck name already exists.', category='error')
         else:
 
